@@ -146,7 +146,7 @@ class WorkMetrics(Metrics):
                 if start is not None:
                     results[met] += cur_time - start
                     self._start[met] = cur_time
-                    self.data[met] = 0.0
+                self.data[met] = 0.0
                 results[met] = (int(results[met] * 1000), 'ms')
         return results
 
