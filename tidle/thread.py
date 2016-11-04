@@ -77,10 +77,18 @@ class MetricsThread(threading.Thread):
 
 
 class MetricsSingleton(Borg):
+    _lock = threading.Lock()
+
     def __init__(self, *args, **kwargs):
         super().__init__()
-        if getattr(self, 'thread', None) is None:
-            setattr(self, 'thread', MetricsThread.launch(*args, **kwargs))
+        with self._lock:
+            th = getattr(self, 'thread', None)
+            if th is None:
+                setattr(self, 'thread', MetricsThread.launch(*args, **kwargs))
+            else:
+                # TODO: Check other values for consitency.
+                for met in kwargs.get('metrics', []):
+                    th.register(met)
 
     def __getattr__(self, name):
         try:
