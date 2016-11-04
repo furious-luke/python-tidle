@@ -1,25 +1,56 @@
 from unittest import TestCase
 import time
 
-from tidle import TidleThread
+from tidle import MetricsThread, IdleMetrics, RssMetrics
 
 
-class ThreadTestCase(TestCase):
-    def test_thread(self):
-        th = TidleThread(source='test')
-        th.register('a')
-        th.start()
+def do_work(met):
+    for ii in range(10):
+        with met.work('a'):
+            time.sleep(0.3)
+
+
+class IdleTestCase(TestCase):
+    def test_basic(self):
+        met = IdleMetrics(metrics=['a'])
+        met.start()
         start = time.time()
         time.sleep(0.5)
-        with th.work('a'):
+        with met.work('a'):
             time.sleep(0.3)
         time.sleep(0.1)
-        with th.work('a'):
+        with met.work('a'):
             time.sleep(0.2)
         time.sleep(0.1)
         end = time.time()
-        idle = th._calc_idle(th.metrics['a'], time.time())
-        self.assertGreater(idle, 700)
-        self.assertLess(idle, 800)
+        results = met.calc()
+        self.assertGreater(results['a'], 0.7)
+        self.assertLess(results['a'], 0.8)
         self.assertGreater(end - start, 1.2)
         self.assertLess(end - start, 1.3)
+
+
+class IdleAndMemoryTestCase(TestCase):
+    def test_all(self):
+        idles = [
+            IdleMetrics(metrics=['a']),
+            IdleMetrics(metrics=['a']),
+            IdleMetrics(metrics=['b']),
+            IdleMetrics(metrics=['b'])
+        ]
+        th = MetricsThread.launch(source='test', metrics=[
+            idles[0],
+            idles[1],
+            idles[2],
+            idles[3],
+            RssMetrics()
+        ])
+        th.start()
+        print(th.format())
+        with idles[0].work('a'):
+            time.sleep(0.3)
+        time.sleep(0.1)
+        with idles[0].work('a'):
+            time.sleep(0.2)
+        time.sleep(0.1)
+        print(th.format())
