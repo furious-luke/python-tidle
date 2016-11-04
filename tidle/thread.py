@@ -43,7 +43,7 @@ class MetricsThread(threading.Thread):
     def format(self):
         results = self.calculate()
         msg = self.source + ' '.join(
-            ['sample#{}={}{}'.format(k, v[0], v[1])
+            ['measure#{}={}{}'.format(k, v[0], v[1])
              for k, v in results.items()]
         )
         return msg
