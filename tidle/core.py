@@ -1,9 +1,10 @@
 import threading
 import time
-import resource
 from contextlib import contextmanager
 
 import psutil
+
+from .memory import get_memory_usage
 
 
 class Metrics(object):
@@ -21,9 +22,9 @@ class RssMetrics(object):
         pass
 
     def capture(self):
-        rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+        rss = get_memory_usage()
         return {
-            'rss.max': (rss[0], 'kb')
+            'rss.max': (rss, 'kb')
         }
 
     def calculate(self):

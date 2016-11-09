@@ -2,11 +2,11 @@ import re
 from unittest import TestCase
 import time
 
-from tidle import MetricsSingleton, IdleMetrics, RssMetrics
+from tidle import MetricsSingleton, IdleMetrics
 
 
-A_PROG = re.compile(r'sample#a=(\d+)ms')
-B_PROG = re.compile(r'sample#b=(\d+)ms')
+A_PROG = re.compile(r'measure#a=(\d+)ms')
+B_PROG = re.compile(r'measure#b=(\d+)ms')
 
 
 class SingletonTestCase(TestCase):
@@ -14,6 +14,7 @@ class SingletonTestCase(TestCase):
         s0 = MetricsSingleton(source='test')
         s1 = MetricsSingleton()
         s2 = MetricsSingleton()
+        s0._start()
         self.assertEqual(s0.thread, s1.thread)
         self.assertEqual(s0.thread, s2.thread)
         idles = [

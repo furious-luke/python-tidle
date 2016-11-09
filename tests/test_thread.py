@@ -23,9 +23,9 @@ class IdleTestCase(TestCase):
             time.sleep(0.2)
         time.sleep(0.1)
         end = time.time()
-        results = met.calc()
-        self.assertGreater(results['a'], 0.7)
-        self.assertLess(results['a'], 0.8)
+        results = met.calculate()
+        self.assertGreater(results['a'][0], 700)
+        self.assertLess(results['a'][0], 800)
         self.assertGreater(end - start, 1.2)
         self.assertLess(end - start, 1.3)
 
@@ -45,12 +45,10 @@ class IdleAndMemoryTestCase(TestCase):
             idles[3],
             RssMetrics()
         ])
-        th.start()
-        print(th.format())
+        th._start()
         with idles[0].work('a'):
             time.sleep(0.3)
         time.sleep(0.1)
         with idles[0].work('a'):
             time.sleep(0.2)
         time.sleep(0.1)
-        print(th.format())
