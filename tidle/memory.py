@@ -12,7 +12,7 @@ def get_memory_usage():
 
 
 class MemoryMetrics(object):
-    def __init__(self, tmpl='measure#memory-increase=%dmb'):
+    def __init__(self, tmpl='measure#memory-increase=%dkb'):
         self.tmpl = tmpl
 
     def __enter__(self):
